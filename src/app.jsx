@@ -217,7 +217,6 @@ function App() {
                 while (next < encryptedQuote.length && !ALPHABET.includes(encryptedQuote[next])) next++;
                 if (next < encryptedQuote.length) setFocusedIndex(next);
             } else if (e.key === 'ArrowLeft') {
-                // Optional navigation
                 let prev = focusedIndex - 1;
                 while (prev >= 0 && !ALPHABET.includes(encryptedQuote[prev])) prev--;
                 if (prev >= 0) setFocusedIndex(prev);

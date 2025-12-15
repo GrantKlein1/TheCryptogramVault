@@ -7,6 +7,7 @@ import SettingsModal from './components/SettingsModal';
 import StatsModal from './components/StatsModal';
 import { fetchGameQuotes } from './lib/quoteService';
 import { generateCipher, encryptText, checkWin, ALPHABET, getMostFrequentEncryptedChars } from './lib/gameLogic';
+import { Analytics } from '@vercel/analytics/next';
 
 function App() {
     const [gameQuotes, setGameQuotes] = useState([]);
@@ -361,6 +362,7 @@ function App() {
                 onClose={() => setIsStatsOpen(false)}
                 gameTimes={gameTimes}
             />
+            <Analytics />
         </div>
     );
 }

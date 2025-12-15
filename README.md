@@ -2,6 +2,8 @@
 
 **The Cryptogram Vault** is an interactive web-based cryptogram puzzle game. Players must decipher quotes by substituting encrypted letters to reveal the hidden wisdom. The game features a sleek, high-security vault theme, hard mode for extra challenge, and a built-in timer.
 
+[**Play Now Live**](https://the-cryptogram-vault-lv9a6w4h9-grantk-4077s-projects.vercel.app/)
+
 ## Features
 
 *   **Infinite Puzzles:** Fetches random quotes from the DummyJSON API.
@@ -19,34 +21,6 @@
 *   **React** (v18)
 *   **Vite** (Build Tool)
 *   **Vanilla CSS** (No external UI libraries)
-
-## Getting Started
-
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/yourusername/cryptogram-vault.git
-    cd cryptogram-vault
-    ```
-
-2.  **Install dependencies:**
-    ```bash
-    npm install
-    ```
-
-3.  **Run the development server:**
-    ```bash
-    npm run dev
-    ```
-
-4.  **Build for production:**
-    ```bash
-    npm run build
-    ```
-
-## Deployment
-
-This project is ready for deployment on **Netlify**, **Vercel**, or **GitHub Pages**.
-Simply connect your repository or drag-and-drop the `dist` folder after building.
 
 ## License
 

@@ -2,8 +2,6 @@
 
 **The Cryptogram Vault** is an interactive web-based cryptogram puzzle game. Players must decipher quotes by substituting encrypted letters to reveal the hidden wisdom. The game features a sleek, high-security vault theme, hard mode for extra challenge, and a built-in timer.
 
-![Game Icon Placeholder](https://via.placeholder.com/150?text=Vault+Icon)
-
 ## Features
 
 *   **Infinite Puzzles:** Fetches random quotes from the DummyJSON API.

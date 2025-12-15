@@ -13,7 +13,7 @@
 *   **Smart Input:**
     *   Physical keyboard support.
     *   Auto-advance cursor.
-    *   Duplicate letter detection (flashes red on conflict).
+    *   Duplicate letter detection.
 *   **Responsive Design:** Play on desktop or mobile.
 
 ## Tech Stack

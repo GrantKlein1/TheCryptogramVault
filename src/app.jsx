@@ -213,7 +213,6 @@ function App() {
             } else if (e.key === 'Backspace' || e.key === 'Delete') {
                 handleDelete();
             } else if (e.key === 'ArrowRight') {
-                // Optional navigation
                 let next = focusedIndex + 1;
                 while (next < encryptedQuote.length && !ALPHABET.includes(encryptedQuote[next])) next++;
                 if (next < encryptedQuote.length) setFocusedIndex(next);

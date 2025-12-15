@@ -21,7 +21,3 @@
 *   **React** (v18)
 *   **Vite** (Build Tool)
 *   **Vanilla CSS** (No external UI libraries)
-
-## License
-
-MIT License

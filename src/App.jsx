@@ -4,6 +4,7 @@ import PuzzleBoard from './components/PuzzleBoard';
 import Keyboard from './components/Keyboard';
 import Controls from './components/Controls';
 import SettingsModal from './components/SettingsModal';
+import StatsModal from './components/StatsModal';
 import { fetchGameQuotes } from './lib/quoteService';
 import { generateCipher, encryptText, checkWin, ALPHABET, getMostFrequentEncryptedChars } from './lib/gameLogic';
 
@@ -20,6 +21,10 @@ function App() {
     const [isWon, setIsWon] = useState(false);
     const [usedLetters, setUsedLetters] = useState(new Set());
     const [isLoading, setIsLoading] = useState(true);
+
+    // Stats State
+    const [isStatsOpen, setIsStatsOpen] = useState(false);
+    const [gameTimes, setGameTimes] = useState([]);
 
     // Timer State
     const [timer, setTimer] = useState(0);
@@ -39,6 +44,14 @@ function App() {
             setGameQuotes(quotes);
             setIsLoading(false);
         };
+        const savedTimes = localStorage.getItem('cryptogram_times');
+        if (savedTimes) {
+            try {
+                setGameTimes(JSON.parse(savedTimes));
+            } catch (e) {
+                console.error("Failed to parse stats", e);
+            }
+        }
         loadQuotes();
     }, []);
 
@@ -108,9 +121,14 @@ function App() {
         setUsedLetters(used);
 
         // Check win
-        if (currentQuote && checkWin(encryptedQuote, userGuesses, currentQuote.text)) {
+        if (!isWon && currentQuote && checkWin(encryptedQuote, userGuesses, currentQuote.text)) {
             setIsWon(true);
             setIsTimerRunning(false); // Stop timer
+
+            // Save Time
+            const newTimes = [...gameTimes, timer];
+            setGameTimes(newTimes);
+            localStorage.setItem('cryptogram_times', JSON.stringify(newTimes));
         }
 
         // Check Hard Mode Unlock Condition
@@ -130,7 +148,7 @@ function App() {
             }
         }
 
-    }, [userGuesses, currentQuote, encryptedQuote, isHardMode, blockedChars, reverseCipher]);
+    }, [userGuesses, currentQuote, encryptedQuote, isHardMode, blockedChars, reverseCipher, isWon, timer, gameTimes]);
 
     const handleCellClick = (index) => {
         if (isWon) return;
@@ -289,7 +307,10 @@ function App() {
                         ⏱️ {formatTime(timer)}
                     </div>
                 )}
-                <button className="settings-btn" onClick={() => setIsSettingsOpen(true)}>⚙️ Settings</button>
+                <div className="top-controls">
+                    <button className="icon-btn" onClick={() => setIsStatsOpen(true)} title="Stats">📊</button>
+                    <button className="settings-btn" onClick={() => setIsSettingsOpen(true)} title="Settings">⚙️</button>
+                </div>
             </div>
 
             {isWon && (
@@ -334,6 +355,11 @@ function App() {
                 onToggleHardMode={setIsHardMode}
                 showTimer={showTimer}
                 onToggleTimer={setShowTimer}
+            />
+            <StatsModal
+                isOpen={isStatsOpen}
+                onClose={() => setIsStatsOpen(false)}
+                gameTimes={gameTimes}
             />
         </div>
     );

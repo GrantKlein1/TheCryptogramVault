@@ -1,0 +1,130 @@
+.stats-content {
+    max-width: 600px;
+    width: 95%;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.stat-item {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 15px;
+    border-radius: 4px;
+    text-align: center;
+    border: 1px solid #444;
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--secondary-color);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    font-family: var(--font-family);
+}
+
+.chart-container {
+    height: 220px;
+    margin-bottom: 30px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    padding: 10px 10px 20px 40px;
+    /* Left padding for Y-Axis */
+    border: 1px solid #333;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.no-data {
+    color: var(--secondary-color);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-style: italic;
+    width: 100%;
+    text-align: center;
+}
+
+.svg-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.y-axis {
+    position: absolute;
+    left: -35px;
+    top: 0;
+    bottom: 0;
+    width: 30px;
+}
+
+.y-label {
+    position: absolute;
+    right: 0;
+    font-size: 0.7rem;
+    color: var(--secondary-color);
+    transform: translateY(-50%);
+}
+
+.svg-content {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.chart-bar {
+    fill: var(--primary-color);
+    opacity: 0.3;
+    transition: opacity 0.2s;
+}
+
+.chart-bar:hover {
+    opacity: 0.6;
+}
+
+.chart-line {
+    vector-effect: non-scaling-stroke;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    filter: drop-shadow(0 0 2px rgba(212, 175, 55, 0.5));
+}
+
+.chart-dot {
+    fill: var(--bg-color);
+    stroke: var(--primary-color);
+    stroke-width: 1.5px;
+    vector-effect: non-scaling-stroke;
+}
+
+.x-axis {
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    right: 0;
+    height: 20px;
+}
+
+.x-label {
+    position: absolute;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    color: #666;
+}

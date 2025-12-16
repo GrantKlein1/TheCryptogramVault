@@ -1,6 +1,6 @@
 import React from 'react';
 
-function SettingsModal({ isOpen, onClose, isHardMode, onToggleHardMode, showTimer, onToggleTimer }) {
+function SettingsModal({ isOpen, onClose, isHardMode, onToggleHardMode, showTimer, onToggleTimer, isKeyboardVisible, onToggleKeyboard }) {
     if (!isOpen) return null;
 
     return (
@@ -34,6 +34,21 @@ function SettingsModal({ isOpen, onClose, isHardMode, onToggleHardMode, showTime
                     </label>
                     <p className="setting-description">
                         Display the time elapsed while solving the puzzle.
+                    </p>
+                </div>
+
+                <div className="setting-option">
+                    <label className="toggle-label">
+                        <span>Show On-screen Keyboard</span>
+                        <input
+                            type="checkbox"
+                            checked={isKeyboardVisible}
+                            onChange={(e) => onToggleKeyboard(e.target.checked)}
+                        />
+                        <span className="toggle-switch"></span>
+                    </label>
+                    <p className="setting-description">
+                        Toggle the visibility of the virtual keyboard.
                     </p>
                 </div>
                 <button onClick={onClose} className="primary">Close Vault</button>

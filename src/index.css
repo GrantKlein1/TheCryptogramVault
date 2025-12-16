@@ -161,6 +161,13 @@ body {
     font-weight: bold;
 }
 
+.letter-slot.apostrophe .encrypted {
+    position: relative;
+    top: -24px;
+    /* Move up significantly to align with guess area */
+    font-size: 1.4rem;
+}
+
 @keyframes shake {
     0% {
         transform: translateX(0);
@@ -201,31 +208,7 @@ body {
 }
 
 /* Resize Handle */
-.resize-handle {
-    height: 15px;
-    background: #1a1a1a;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: row-resize;
-    border-top: 1px solid #333;
-    border-bottom: 1px solid #333;
-    transition: background 0.2s;
-    touch-action: none;
-    /* Critical for touch dragging */
-}
-
-.resize-handle:hover,
-.resize-handle:active {
-    background: #2a2a2a;
-}
-
-.resize-line {
-    width: 40px;
-    height: 4px;
-    background-color: #555;
-    border-radius: 2px;
-}
+/* Resize Removed */
 
 .interaction-area {
     background: var(--panel-bg);
@@ -404,11 +387,6 @@ button.primary:hover {
         /* Less padding on mobile */
     }
 
-    .resize-handle {
-        padding: 10px 0;
-        /* Larger touch target */
-        height: 20px;
-    }
 }
 
 /* Settings Modal */

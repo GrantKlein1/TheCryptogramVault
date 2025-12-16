@@ -29,10 +29,12 @@ function PuzzleBoard({ encryptedText, userGuesses, focusedIndex, conflictIndex, 
                         const focusedChar = focusedIndex !== null && focusedIndex < encryptedText.length ? encryptedText[focusedIndex] : null;
                         const isSameChar = focusedChar && char === focusedChar;
 
+                        const isApostrophe = char === "'";
+
                         return (
                             <div
                                 key={globalIndex}
-                                className={`letter-slot ${isLetter ? 'interactive' : 'punctuation'} ${isFocused ? 'focused' : ''} ${isSameChar ? 'active' : ''} ${isConflict ? 'conflict' : ''} ${isBlocked ? 'blocked' : ''}`}
+                                className={`letter-slot ${isLetter ? 'interactive' : 'punctuation'} ${isApostrophe ? 'apostrophe' : ''} ${isFocused ? 'focused' : ''} ${isSameChar ? 'active' : ''} ${isConflict ? 'conflict' : ''} ${isBlocked ? 'blocked' : ''}`}
                                 onClick={() => isLetter && !isBlocked && onCellClick(globalIndex)}
                             >
                                 <div className="guess">{isLetter ? (isBlocked ? '🔒' : guess) : ''}</div>

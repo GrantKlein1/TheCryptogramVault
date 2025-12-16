@@ -5,7 +5,6 @@ import Keyboard from './components/Keyboard';
 import Controls from './components/Controls';
 import SettingsModal from './components/SettingsModal';
 import StatsModal from './components/StatsModal';
-import ResizeHandle from './components/ResizeHandle';
 import { fetchGameQuotes } from './lib/quoteService';
 import { generateCipher, encryptText, checkWin, ALPHABET, getMostFrequentEncryptedChars } from './lib/gameLogic';
 
@@ -38,7 +37,6 @@ function App() {
     const [blockedChars, setBlockedChars] = useState(new Set()); // Set of encrypted chars that are currently blocked
 
     // UI State
-    const [puzzleHeight, setPuzzleHeight] = useState(400); // Initial height in px
     const [isKeyboardVisible, setIsKeyboardVisible] = useState(true);
 
     // Initialize quotes on mount
@@ -100,18 +98,11 @@ function App() {
         setTimer(0);
         setIsTimerRunning(true);
 
-        // Hard Mode Logic
-        if (isHardMode) {
-            const frequentChars = getMostFrequentEncryptedChars(encrypted, 2);
-            setBlockedChars(new Set(frequentChars));
-        } else {
-            setBlockedChars(new Set());
-        }
-
+        // Find first letter index to focus
         // Find first letter index to focus
         const firstLetterIdx = encrypted.split('').findIndex(c => ALPHABET.includes(c));
         setFocusedIndex(firstLetterIdx !== -1 ? firstLetterIdx : null);
-    }, [gameQuotes, isHardMode]);
+    }, [gameQuotes]);
 
     // Start game when quotes are loaded
     useEffect(() => {
@@ -136,7 +127,7 @@ function App() {
             localStorage.setItem('cryptogram_times', JSON.stringify(newTimes));
         }
 
-        // Check Hard Mode Unlock Condition
+        // Hard Mode Logic - Unlock Condition
         if (isHardMode && blockedChars.size > 0 && currentQuote) {
             // Check if all NON-blocked letters are correct
             const allNonBlockedCorrect = encryptedQuote.split('').every(char => {
@@ -154,6 +145,28 @@ function App() {
         }
 
     }, [userGuesses, currentQuote, encryptedQuote, isHardMode, blockedChars, reverseCipher, isWon, timer, gameTimes]);
+
+    // Hard Mode Logic - Initial Block / Toggle Effect
+    useEffect(() => {
+        if (!encryptedQuote) return;
+
+        if (isHardMode) {
+            // Only apply block if we haven't already solved them?
+            // Actually request is "immediate effect". So if I toggle ON, I should block the most frequent ones.
+            // But if I already unlocked them, should they re-lock?
+            // "The hard mode is not activating/effecting the current puzzle only when I click new game"
+            // For simplicity, let's recalculate based on current encrypted text.
+            // If the user already solved them, they might get locked again if they are incorrect?
+            // Let's just blindly apply the block rule on distinct chars.
+            const frequentChars = getMostFrequentEncryptedChars(encryptedQuote, 2);
+            // However, if the user has ALREADY guessed them correctly, we shouldn't block them?
+            // The prompt implies playing the game.
+            // Let's just set the blocked chars. The unlock logic will run in the other effect and unlock them if everything else is correct.
+            setBlockedChars(new Set(frequentChars));
+        } else {
+            setBlockedChars(new Set());
+        }
+    }, [isHardMode, encryptedQuote]);
 
     const handleCellClick = (index) => {
         if (isWon) return;
@@ -251,17 +264,8 @@ function App() {
     }, [isWon, handleSelectLetter, handleDelete, focusedIndex, encryptedQuote]);
 
 
-    // Resize Logic
-    const handleResize = useCallback((deltaY) => {
-        setPuzzleHeight(prevHeight => {
-            const newHeight = prevHeight + deltaY;
-            // Min 200px, Max 800px (or adjust as needed)
-            return Math.min(Math.max(newHeight, 200), 800);
-        });
-    }, []);
-
-    const toggleKeyboard = () => {
-        setIsKeyboardVisible(!isKeyboardVisible);
+    const toggleKeyboard = (isVisible) => {
+        setIsKeyboardVisible(isVisible);
     };
 
 
@@ -341,7 +345,7 @@ function App() {
                 </div>
             )}
 
-            <div className="game-area" style={{ height: `${puzzleHeight}px` }}>
+            <div className="game-area">
                 <PuzzleBoard
                     encryptedText={encryptedQuote}
                     userGuesses={userGuesses}
@@ -352,8 +356,6 @@ function App() {
                 />
             </div>
 
-            <ResizeHandle onResize={handleResize} />
-
             <div className="interaction-area">
                 <Controls
                     onUndo={handleUndo}
@@ -362,12 +364,6 @@ function App() {
                     onNewGame={startNewGame}
                     onGiveUp={handleGiveUp}
                 />
-
-                <div className="keyboard-controls">
-                    <button className="sm-btn" onClick={toggleKeyboard}>
-                        {isKeyboardVisible ? '⬇️ Hide Keyboard' : '⬆️ Show Keyboard'}
-                    </button>
-                </div>
 
                 <div className={`keyboard-container ${isKeyboardVisible ? 'visible' : 'hidden'}`}>
                     <Keyboard
@@ -385,6 +381,8 @@ function App() {
                 onToggleHardMode={setIsHardMode}
                 showTimer={showTimer}
                 onToggleTimer={setShowTimer}
+                isKeyboardVisible={isKeyboardVisible}
+                onToggleKeyboard={toggleKeyboard}
             />
             <StatsModal
                 isOpen={isStatsOpen}

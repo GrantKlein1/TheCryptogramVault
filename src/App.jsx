@@ -187,6 +187,13 @@ function App() {
             return;
         }
 
+        // Check if letter matches the encrypted char (prevent self-mapping)
+        if (letter === encryptedChar) {
+            setConflictIndex(focusedIndex);
+            setTimeout(() => setConflictIndex(null), 500);
+            return;
+        }
+
         // Check if letter is already used by a DIFFERENT encrypted char
         const existingEncryptedChar = Object.keys(userGuesses).find(key => userGuesses[key] === letter);
         if (existingEncryptedChar && existingEncryptedChar !== encryptedChar) {

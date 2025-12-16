@@ -5,9 +5,9 @@ import Keyboard from './components/Keyboard';
 import Controls from './components/Controls';
 import SettingsModal from './components/SettingsModal';
 import StatsModal from './components/StatsModal';
+import ResizeHandle from './components/ResizeHandle';
 import { fetchGameQuotes } from './lib/quoteService';
 import { generateCipher, encryptText, checkWin, ALPHABET, getMostFrequentEncryptedChars } from './lib/gameLogic';
-import { Analytics } from '@vercel/analytics/next';
 
 function App() {
     const [gameQuotes, setGameQuotes] = useState([]);
@@ -36,6 +36,10 @@ function App() {
     const [isHardMode, setIsHardMode] = useState(false);
     const [showTimer, setShowTimer] = useState(true);
     const [blockedChars, setBlockedChars] = useState(new Set()); // Set of encrypted chars that are currently blocked
+
+    // UI State
+    const [puzzleHeight, setPuzzleHeight] = useState(400); // Initial height in px
+    const [isKeyboardVisible, setIsKeyboardVisible] = useState(true);
 
     // Initialize quotes on mount
     useEffect(() => {
@@ -247,6 +251,20 @@ function App() {
     }, [isWon, handleSelectLetter, handleDelete, focusedIndex, encryptedQuote]);
 
 
+    // Resize Logic
+    const handleResize = useCallback((deltaY) => {
+        setPuzzleHeight(prevHeight => {
+            const newHeight = prevHeight + deltaY;
+            // Min 200px, Max 800px (or adjust as needed)
+            return Math.min(Math.max(newHeight, 200), 800);
+        });
+    }, []);
+
+    const toggleKeyboard = () => {
+        setIsKeyboardVisible(!isKeyboardVisible);
+    };
+
+
     const handleUndo = () => {
         if (history.length === 0 || isWon) return;
         const previous = history[history.length - 1];
@@ -323,7 +341,7 @@ function App() {
                 </div>
             )}
 
-            <div className="game-area">
+            <div className="game-area" style={{ height: `${puzzleHeight}px` }}>
                 <PuzzleBoard
                     encryptedText={encryptedQuote}
                     userGuesses={userGuesses}
@@ -334,6 +352,8 @@ function App() {
                 />
             </div>
 
+            <ResizeHandle onResize={handleResize} />
+
             <div className="interaction-area">
                 <Controls
                     onUndo={handleUndo}
@@ -342,11 +362,20 @@ function App() {
                     onNewGame={startNewGame}
                     onGiveUp={handleGiveUp}
                 />
-                <Keyboard
-                    onSelectLetter={handleSelectLetter}
-                    selectedLetter={null}
-                    usedLetters={usedLetters}
-                />
+
+                <div className="keyboard-controls">
+                    <button className="sm-btn" onClick={toggleKeyboard}>
+                        {isKeyboardVisible ? '⬇️ Hide Keyboard' : '⬆️ Show Keyboard'}
+                    </button>
+                </div>
+
+                <div className={`keyboard-container ${isKeyboardVisible ? 'visible' : 'hidden'}`}>
+                    <Keyboard
+                        onSelectLetter={handleSelectLetter}
+                        selectedLetter={null}
+                        usedLetters={usedLetters}
+                    />
+                </div>
             </div>
 
             <SettingsModal
@@ -362,7 +391,6 @@ function App() {
                 onClose={() => setIsStatsOpen(false)}
                 gameTimes={gameTimes}
             />
-            <Analytics />
         </div>
     );
 }

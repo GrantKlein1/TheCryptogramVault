@@ -200,6 +200,33 @@ body {
     background: #0a0a0a;
 }
 
+/* Resize Handle */
+.resize-handle {
+    height: 15px;
+    background: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: row-resize;
+    border-top: 1px solid #333;
+    border-bottom: 1px solid #333;
+    transition: background 0.2s;
+    touch-action: none;
+    /* Critical for touch dragging */
+}
+
+.resize-handle:hover,
+.resize-handle:active {
+    background: #2a2a2a;
+}
+
+.resize-line {
+    width: 40px;
+    height: 4px;
+    background-color: #555;
+    border-radius: 2px;
+}
+
 .interaction-area {
     background: var(--panel-bg);
     padding: 20px;
@@ -252,6 +279,34 @@ button.primary {
 button.primary:hover {
     background: linear-gradient(to bottom, #f1c40f, #d4af37);
     box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+}
+
+.sm-btn {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+    margin-bottom: 10px;
+}
+
+.keyboard-controls {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 5px;
+}
+
+.keyboard-container {
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.keyboard-container.visible {
+    opacity: 1;
+    max-height: 300px;
+    /* Adjust if keyboard is taller */
+}
+
+.keyboard-container.hidden {
+    opacity: 0;
+    max-height: 0;
 }
 
 .keyboard {
@@ -320,15 +375,39 @@ button.primary:hover {
 }
 
 @media (max-width: 600px) {
+    .app-container {
+        padding: 10px;
+        height: 100vh;
+        /* Ensure full viewport height */
+    }
+
     .letter-slot {
-        width: 24px;
-        font-size: 0.9rem;
+        width: 26px;
+        /* Slightly larger targets */
+        font-size: 0.95rem;
     }
 
     .key {
-        width: 30px;
-        height: 38px;
-        font-size: 0.9rem;
+        width: 32px;
+        /* Easier to tap */
+        height: 44px;
+        font-size: 1rem;
+    }
+
+    .puzzle-board {
+        gap: 15px;
+        /* Reduce gap to fit more */
+    }
+
+    .game-area {
+        padding: 10px;
+        /* Less padding on mobile */
+    }
+
+    .resize-handle {
+        padding: 10px 0;
+        /* Larger touch target */
+        height: 20px;
     }
 }
 

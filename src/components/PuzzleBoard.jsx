@@ -1,7 +1,7 @@
 import React from 'react';
 import { ALPHABET } from '../lib/gameLogic';
 
-function PuzzleBoard({ encryptedText, userGuesses, focusedIndex, conflictIndex, blockedChars, onCellClick }) {
+function PuzzleBoard({ encryptedText, userGuesses, focusedIndex, conflictIndex, blockedChars, incorrectEncryptedChars, onCellClick }) {
     // Split into words but keep track of original indices
     let currentIndex = 0;
     const words = encryptedText.split(' ').map(word => {
@@ -24,6 +24,7 @@ function PuzzleBoard({ encryptedText, userGuesses, focusedIndex, conflictIndex, 
                         const isFocused = globalIndex === focusedIndex;
                         const isConflict = globalIndex === conflictIndex;
                         const isBlocked = blockedChars && blockedChars.has(char);
+                        const isIncorrect = incorrectEncryptedChars && incorrectEncryptedChars.has(char);
 
                         // Highlight if it's the same encrypted character as the focused one
                         const focusedChar = focusedIndex !== null && focusedIndex < encryptedText.length ? encryptedText[focusedIndex] : null;
@@ -34,7 +35,7 @@ function PuzzleBoard({ encryptedText, userGuesses, focusedIndex, conflictIndex, 
                         return (
                             <div
                                 key={globalIndex}
-                                className={`letter-slot ${isLetter ? 'interactive' : 'punctuation'} ${isApostrophe ? 'apostrophe' : ''} ${isFocused ? 'focused' : ''} ${isSameChar ? 'active' : ''} ${isConflict ? 'conflict' : ''} ${isBlocked ? 'blocked' : ''}`}
+                                className={`letter-slot ${isLetter ? 'interactive' : 'punctuation'} ${isApostrophe ? 'apostrophe' : ''} ${isFocused ? 'focused' : ''} ${isSameChar ? 'active' : ''} ${isConflict ? 'conflict' : ''} ${isBlocked ? 'blocked' : ''} ${isIncorrect ? 'incorrect' : ''}`}
                                 onClick={() => isLetter && !isBlocked && onCellClick(globalIndex)}
                             >
                                 <div className="guess">{isLetter ? (isBlocked ? '🔒' : guess) : ''}</div>

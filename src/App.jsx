@@ -35,6 +35,8 @@ function App() {
     const [isHardMode, setIsHardMode] = useState(false);
     const [showTimer, setShowTimer] = useState(true);
     const [blockedChars, setBlockedChars] = useState(new Set()); // Set of encrypted chars that are currently blocked
+    const [incorrectEncryptedChars, setIncorrectEncryptedChars] = useState(new Set()); // Set of encrypted chars that are marked as incorrect
+    const [hintsUsed, setHintsUsed] = useState(0);
 
     // UI State
     const [isKeyboardVisible, setIsKeyboardVisible] = useState(true);
@@ -92,7 +94,10 @@ function App() {
         setHistory([]);
         setIsWon(false);
         setUsedLetters(new Set());
+        setUsedLetters(new Set());
         setConflictIndex(null);
+        setIncorrectEncryptedChars(new Set());
+        setHintsUsed(0);
 
         // Reset and start timer
         setTimer(0);
@@ -206,6 +211,13 @@ function App() {
         // Save history
         setHistory(prev => [...prev, { ...userGuesses }]);
 
+        // Clear error state for this char if it was marked incorrect
+        if (incorrectEncryptedChars.has(encryptedChar)) {
+            const newIncorrect = new Set(incorrectEncryptedChars);
+            newIncorrect.delete(encryptedChar);
+            setIncorrectEncryptedChars(newIncorrect);
+        }
+
         setUserGuesses(prev => ({
             ...prev,
             [encryptedChar]: letter
@@ -239,11 +251,17 @@ function App() {
 
         if (blockedChars.has(encryptedChar)) return; // Can't delete blocked
 
+        if (incorrectEncryptedChars.has(encryptedChar)) {
+            const newIncorrect = new Set(incorrectEncryptedChars);
+            newIncorrect.delete(encryptedChar);
+            setIncorrectEncryptedChars(newIncorrect);
+        }
+
         setHistory(prev => [...prev, { ...userGuesses }]);
         const newGuesses = { ...userGuesses };
         delete newGuesses[encryptedChar];
         setUserGuesses(newGuesses);
-    }, [isWon, focusedIndex, encryptedQuote, userGuesses, blockedChars]);
+    }, [isWon, focusedIndex, encryptedQuote, userGuesses, blockedChars, incorrectEncryptedChars]);
 
     // Keyboard listener
     useEffect(() => {
@@ -287,10 +305,15 @@ function App() {
         if (isWon) return;
         setHistory(prev => [...prev, { ...userGuesses }]);
         setUserGuesses({});
+        setIncorrectEncryptedChars(new Set()); // Fix: Clear incorrect highlights
     };
 
     const handleHint = () => {
         if (isWon) return;
+
+        // Hard mode restriction
+        if (isHardMode && hintsUsed >= 1) return;
+
         // Find an un-guessed or incorrectly guessed letter
         const encryptedChars = encryptedQuote.split('').filter(c => ALPHABET.includes(c));
         // Filter for ones that are not correct yet AND not blocked
@@ -304,10 +327,17 @@ function App() {
         const correctLetter = reverseCipher[randomChar];
 
         setHistory(prev => [...prev, { ...userGuesses }]);
+
+        // Always clear the red mark for this character (whether it was marked or not)
+        const newIncorrect = new Set(incorrectEncryptedChars);
+        newIncorrect.delete(randomChar);
+        setIncorrectEncryptedChars(newIncorrect);
+
         setUserGuesses(prev => ({
             ...prev,
             [randomChar]: correctLetter
         }));
+        setHintsUsed(prev => prev + 1);
     };
 
     const handleGiveUp = () => {
@@ -321,6 +351,19 @@ function App() {
         setUserGuesses(solved);
         setIsWon(true); // Technically solved, but maybe mark as "given up"? For now, just show solution.
         setIsTimerRunning(false);
+    };
+
+    const handleCheck = () => {
+        if (isWon) return;
+        const newIncorrect = new Set();
+        Object.keys(userGuesses).forEach(encryptedChar => {
+            const guess = userGuesses[encryptedChar];
+            const correct = reverseCipher[encryptedChar];
+            if (guess && guess !== correct) {
+                newIncorrect.add(encryptedChar);
+            }
+        });
+        setIncorrectEncryptedChars(newIncorrect);
     };
 
     if (isLoading) {
@@ -359,6 +402,7 @@ function App() {
                     focusedIndex={focusedIndex}
                     conflictIndex={conflictIndex}
                     blockedChars={blockedChars}
+                    incorrectEncryptedChars={incorrectEncryptedChars}
                     onCellClick={handleCellClick}
                 />
             </div>
@@ -368,8 +412,11 @@ function App() {
                     onUndo={handleUndo}
                     onReset={handleReset}
                     onHint={handleHint}
+                    onCheck={handleCheck}
                     onNewGame={startNewGame}
                     onGiveUp={handleGiveUp}
+                    isHintDisabled={isWon || (isHardMode && hintsUsed >= 1)}
+                    isCheckDisabled={isWon || isHardMode}
                 />
 
                 <div className={`keyboard-container ${isKeyboardVisible ? 'visible' : 'hidden'}`}>
